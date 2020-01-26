@@ -2,41 +2,32 @@ package util
 
 import (
 	"fmt"
-	"net/smtp"
+	"gopkg.in/gomail.v2"
 )
 
-// smtpServer data to smtp server.
-type smtpServer struct {
-	host string
-	port string
-}
-
-// Address URI to smtp server.
-func (s *smtpServer) Address() string {
-	return s.host + ":" + s.port
-}
 
 // SendEmail send email
-func SendEmail(sendTo string, message []byte) {
-	// Sender data.
-	from := "robin.bakkerus@gmail.com"
-	password := "Mets2233"
+func SendEmail(
+	smtpUser string,
+	smtpPwd string,
+	sendTo string,
+	subject string,
+	message string,
+	attFilename string) {
 
-	// Receiver email address.
-	to := []string{sendTo}
+	fmt.Println("send to = " + sendTo)
 
-	// smtp server configuration.
-	smtpServer := smtpServer{host: "smtp.gmail.com", port: "587"}
-
-	// Authentication.
-	auth := smtp.PlainAuth("", "robin.bakkerus@gmail.com", password, smtpServer.host)
-
-	// Sending email.
-	err := smtp.SendMail(smtpServer.Address(), auth, from, to, message)
-	if err != nil {
-		fmt.Println(err)
-		return
+	m := gomail.NewMessage()
+	m.SetHeader("From", smtpUser)
+	m.SetHeader("To", sendTo, sendTo)
+	m.SetAddressHeader("Cc", sendTo, "Dan")
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
+	m.Attach(attFilename)
+	
+	d := gomail.NewDialer("smtp.gmail.com", 587, smtpUser, smtpPwd)
+	
+	if err := d.DialAndSend(m); err != nil {
+		panic(err)
 	}
-
-	fmt.Println("Email Sent!")
 }

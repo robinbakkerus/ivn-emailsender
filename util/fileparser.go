@@ -21,7 +21,6 @@ func ReadEmailTemplate() string {
 
 	// Convert []byte to string and print to screen
 	text := string(content)
-	fmt.Println(text)
 	return text
 }
 
@@ -37,7 +36,11 @@ func ReadExcelFile() [][]string {
 }
 
 // ReadProps read
-func ReadProps() {
+func ReadProps() (string, string, string) {
 	p := properties.MustLoadFile("C:/projects/paula-ivnmail/config.properties", properties.UTF8)
-	fmt.Println(p)
+	// fmt.Println(p)
+	smtpUser := p.GetString("smtpUser", "")
+	smtpPwd := p.GetString("smtpPwd", "")
+	sendFrom := p.GetString("sendFrom", "")
+	return smtpUser, smtpPwd, sendFrom
 }
