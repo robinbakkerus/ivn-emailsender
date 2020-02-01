@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	utl "ivnmailer/util"
 	"strings"
+	utl "ivnmailer/util"
+	"ivnmailer/server"
 )
 
 // Data d
@@ -15,6 +16,8 @@ type Data struct {
 }
 
 func main() {
+	server.Init()
+	
 	data := new(Data)
 	data.template = utl.ReadEmailTemplate()
 
