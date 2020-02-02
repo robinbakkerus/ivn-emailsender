@@ -1,19 +1,26 @@
 package server
 
 import (
-  "github.com/gin-gonic/gin"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Router .
-func Router() *gin.Engine  {
+func Router() *gin.Engine {
 
-  router := gin.New()
-  router.Use(gin.Logger())
-  router.Use(gin.Recovery())
+	router := gin.New()
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 
-  // System routes
-  routes.NotFound(router)
-  routes.NoMethods(router)
+	// System routes
+	NotFound(router)
+	NoMethods(router)
 
-  return router
+	router.LoadHTMLGlob("./web/*.html")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+
+	return router
 }
