@@ -45,6 +45,17 @@ func ReadExcelFile(filename string) [][]string {
 	return rows
 }
 
+// ReadExcelFileHeaders ..
+func ReadExcelFileHeaders(filename string) []string {
+	xlsx, err := excelize.OpenFile(filename)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Get all the rows in the Sheet1.
+	rows := xlsx.GetRows("Blad1")
+	return rows[0]
+}
+
 // ReadProps read
 func ReadProps() m.EmailData {
 	p := properties.MustLoadFile(rundir()+"/config.properties", properties.UTF8)
@@ -56,6 +67,7 @@ func ReadProps() m.EmailData {
 	data.SendFrom = p.GetString("sendFrom", "")
 	data.TemplateDir = p.GetString("templateDir", "")
 	data.TemplateName = p.GetString("templateName", "email-template.html")
+	data.ExcelFile = p.GetString("excelFile", "")
 	return data
 }
 

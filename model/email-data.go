@@ -14,6 +14,8 @@ type EmailData struct {
 	TemplateBody string
 	Subject      string
 	Attachment   string
+	MailListIdx  int
+	MailList     string
 }
 
 // Excel ..

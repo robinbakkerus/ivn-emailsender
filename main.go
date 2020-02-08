@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
+	"runtime"
 
 	m "ivnmailer/model"
 	utl "ivnmailer/util"
@@ -17,10 +17,11 @@ func main() {
 	data := m.EmailData{}
 	data = utl.ReadProps()
 	data.Attachment = utl.FindAttachment(data.TemplateDir)
+	excelHeaders := utl.ReadExcelFileHeaders(data.TemplateDir + "/" + "Test-dump.xlsx")
 
 	goon := true
 	for goon {
-		data.ExcelFile = askWhichExcel(data.TemplateDir)
+		data.MailListIdx, data.MailList = askMailingList(excelHeaders)
 		data.Subject = askSubject(data.Subject)
 		showData(data)
 
@@ -34,7 +35,7 @@ func main() {
 			processExcelfile(excelRows, data)
 			goon = askBool("Wil je meer emails versturen ", true)
 		} else {
-			goon = false
+			goon = !askBool("Wil je helemaal stoppen? ", true)
 		}
 	}
 }
@@ -42,33 +43,15 @@ func main() {
 func processExcelfile(rows [][]string, data m.EmailData) {
 	for _, row := range rows {
 		body := strings.Replace(data.TemplateBody, "{naam}", row[1], -1)
-		if strings.ToUpper(row[2]) != "N" {
+		if !skip(data, row) {
 			utl.SendEmail(data, row[0], row[1], body)
 		}
 
 	}
 }
 
-func askWhichExcel(templateDir string) string {
-	files := utl.FindExcelFiles(templateDir)
-
-	nr := 1
-	fmt.Println("Welke Excel :")
-	for _, f := range files {
-		fmt.Println(strconv.Itoa(nr) + " : " + f.Name + " (" + strconv.Itoa(f.Size) + ")")
-		nr++
-	}
-
-	reader := bufio.NewReader(os.Stdin)
-	textInput, _ := reader.ReadString('\r')
-
-	nr, err := strconv.Atoi(strings.TrimRight(textInput, "\r"))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
-	}
-	useExcel := files[nr-1]
-	return useExcel.Name
+func skip(data m.EmailData, row []string) bool {
+	return strings.ToUpper(row[data.MailListIdx]) != "X"
 }
 
 func askBool(askmsg string, defval bool) bool {
@@ -83,8 +66,9 @@ func askBool(askmsg string, defval bool) bool {
 
 	msg := askmsg + " (" + defTxt + ") > "
 	fmt.Println(msg)
-	textInput, _ := reader.ReadString('\r')
-	textInput = strings.ToUpper(strings.TrimRight(textInput, "\r"))
+
+	textInput, _ := reader.ReadString(delim())
+	textInput = strings.ToUpper(trimDelim(textInput))
 	if len(textInput) == 0 {
 		textInput = defTxt
 	}
@@ -94,7 +78,7 @@ func askBool(askmsg string, defval bool) bool {
 
 func showData(data m.EmailData) {
 	fmt.Println()
-	fmt.Println("Excel file = " + data.ExcelFile)
+	fmt.Println("Mail list = " + data.MailList)
 	fmt.Println("Onderwerp  = " + data.Subject)
 	fmt.Println("Attachment = " + data.Attachment)
 	fmt.Println()
@@ -103,11 +87,40 @@ func showData(data m.EmailData) {
 func askSubject(defSubject string) string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Geef onderwerp (" + defSubject + ") > ")
-	textInput, _ := reader.ReadString('\r')
-	r := strings.TrimRight(textInput, "\r")
+	textInput, _ := reader.ReadString(delim())
+	r := trimDelim(textInput)
 	if len(r) == 0 {
 		return defSubject
 	}
 	return r
+}
 
+func delim() byte {
+	if runtime.GOOS == "windows" {
+		return '\r'
+	} else {
+		return '\n'
+	}
+}
+
+func trimDelim(s string) string {
+	if runtime.GOOS == "windows" {
+		return strings.TrimRight(s, "\r")
+	} else {
+		return strings.TrimRight(s, "\n")
+	}
+}
+
+func askMailingList(headers []string) (int, string) {
+	fmt.Println("Welke mailinglist :")
+	for index, hdr := range headers {
+		if index > 1 && len(hdr) > 0 {
+			nr := index - 2
+			fmt.Printf("%v: %v\n", nr, hdr)
+		}
+	}
+
+	var askNr int
+	fmt.Scan(&askNr)
+	return askNr + 2, headers[askNr+2]
 }
