@@ -46,14 +46,31 @@ func ReadExcelFile(filename string) [][]string {
 }
 
 // ReadExcelFileHeaders ..
-func ReadExcelFileHeaders(filename string) []string {
+func ReadExcelFileHeaders(filename string) ([]string, []int) {
 	xlsx, err := excelize.OpenFile(filename)
 	if err != nil {
 		fmt.Println(err)
 	}
 	// Get all the rows in the Sheet1.
 	rows := xlsx.GetRows("Blad1")
-	return rows[0]
+
+	counts := make([]int, 0)
+
+	for i := 2; i < len(rows[0]); i++ {
+		counts = append(counts, getSenttoCount(rows, i))
+	}
+
+	return rows[0], counts
+}
+
+func getSenttoCount(rows [][]string, col int) int {
+	cnt := 0
+	for _, row := range rows {
+		if "X" == strings.ToUpper(row[col]) {
+			cnt++
+		}
+	}
+	return cnt
 }
 
 // ReadProps read
@@ -68,6 +85,7 @@ func ReadProps() m.EmailData {
 	data.TemplateDir = p.GetString("templateDir", "")
 	data.TemplateName = p.GetString("templateName", "email-template.html")
 	data.ExcelFile = p.GetString("excelFile", "")
+	data.DryRun = p.GetBool("dryrun", false)
 	return data
 }
 

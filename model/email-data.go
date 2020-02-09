@@ -16,6 +16,7 @@ type EmailData struct {
 	Attachment   string
 	MailListIdx  int
 	MailList     string
+	DryRun       bool
 }
 
 // Excel ..

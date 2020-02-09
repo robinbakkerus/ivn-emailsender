@@ -22,11 +22,15 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 	}
 
 	if len(sendTo) > 0 {
-		fmt.Println("sending email to " + sendTo + " " + sendToName)
-		// d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
+		if data.DryRun {
+			fmt.Println("DRY-RUN: sending email to " + sendTo + " " + sendToName)
+		} else {
+			fmt.Println("sending email to " + sendTo + " " + sendToName)
+			d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
 
-		// if err := d.DialAndSend(m); err != nil {
-		// 	panic(err)
-		// }
+			if err := d.DialAndSend(m); err != nil {
+				panic(err)
+			}
+		}
 	}
 }
