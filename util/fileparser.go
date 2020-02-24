@@ -6,7 +6,6 @@ import (
 	m "ivnmailer/model"
 	"log"
 	"os"
-	"sort"
 	"strings"
 	"time"
 
@@ -94,41 +93,14 @@ func rundir() string {
 	return dir
 }
 
-// FindExcelFiles ..
-func FindExcelFiles(templateDir string) []m.Excel {
-	files, err := ioutil.ReadDir(templateDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var excelFiles []m.Excel
-
-	for _, f := range files {
-		if strings.HasSuffix(strings.ToUpper(f.Name()), ".XLSX") && !strings.HasPrefix(f.Name(), "~") {
-			rows := ReadExcelFile(templateDir + "/" + f.Name())
-			excelFiles = append(excelFiles, m.Excel{f.Name(), len(rows)})
-		}
-	}
-
-	sort.Sort(m.BySize(excelFiles))
-	return excelFiles
-}
-
-// FindAttachment ..
-func FindAttachment(templateDir string) string {
+// FindAttachments ..
+func FindAttachments(templateDir string) []os.FileInfo {
 	files, err := ioutil.ReadDir(templateDir + m.AttachmentSubdir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if len(files) > 1 {
-		fmt.Println("Meer dan 1 attachment gevonden in " + templateDir + m.AttachmentSubdir)
-		fmt.Println("Op dit moment mag er 1 of 0 attachment worden gestuurd")
-		os.Exit(0)
-	} else if len(files) == 1 {
-		return files[0].Name()
-	}
-	return ""
+	return files
 }
 
 // CheckIfAlreadyProcessed ..
@@ -154,15 +126,12 @@ func MakeHistory(data m.EmailData) {
 	toTemplate := histDir(data) + "/" + data.TemplateName
 	Copy(fromTemplate, toTemplate)
 
-	fromAtt := attDir(data) + "/" + data.Attachment
-	toAtt := histDir(data) + "/" + data.Attachment
-	Copy(fromAtt, toAtt)
+	//fromAtt := attDir(data) + "/" + data.Attachments
+	//toAtt := histDir(data) + "/" + data.Attachments
+	//Copy(fromAtt, toAtt)
 }
 
 func histDir(data m.EmailData) string {
 	return data.TemplateDir + m.HistorySubdir + "/" + DateToStr(time.Now())
 }
 
-func attDir(data m.EmailData) string {
-	return data.TemplateDir + m.AttachmentSubdir
-}

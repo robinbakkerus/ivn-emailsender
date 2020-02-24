@@ -13,7 +13,7 @@ func main() {
 
 	data := m.EmailData{}
 	data = u.ReadProps()
-	data.Attachment = u.FindAttachment(data.TemplateDir)
+	data.Attachments = u.FindAttachments(data.TemplateDir)
 	excelHeaders, sendtoCounts := u.ReadExcelFileHeaders(data.TemplateDir + "/" + data.ExcelFile)
 
 	goon := true
@@ -61,10 +61,15 @@ func skip(data m.EmailData, row []string) bool {
 }
 
 func showData(data m.EmailData) {
+
+
 	fmt.Println()
 	fmt.Println("Mail list = " + data.MailList)
 	fmt.Println("Onderwerp  = " + data.Subject)
-	fmt.Println("Attachment = " + data.Attachment)
+	fmt.Println("Attachments ")
+	for i, f := range data.Attachments {
+		fmt.Println(i, f.Name())
+	}
 	fmt.Println()
 }
 

@@ -1,5 +1,7 @@
 package model
 
+import "os"
+
 const AttachmentSubdir = "/attachment"
 const HistorySubdir = "/verstuurd"
 
@@ -13,7 +15,7 @@ type EmailData struct {
 	ExcelFile    string
 	TemplateBody string
 	Subject      string
-	Attachment   string
+	Attachments  []os.FileInfo
 	MailListIdx  int
 	MailList     string
 	DryRun       bool

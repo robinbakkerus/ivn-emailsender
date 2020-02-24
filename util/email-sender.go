@@ -17,8 +17,8 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 	m.SetAddressHeader("To", sendTo, sendToName)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", emailBody)
-	if len(data.Attachment) > 0 {
-		m.Attach(data.TemplateDir + model.AttachmentSubdir + "/" + data.Attachment)
+	for i := 0; i < len(data.Attachments); i++ {
+		m.Attach(data.TemplateDir + model.AttachmentSubdir + "/" + data.Attachments[i].Name())
 	}
 
 	if len(sendTo) > 0 {
