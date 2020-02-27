@@ -6,6 +6,7 @@
 *.dylib
 .history
 .vscode
+.idea
 ivnmailer
 
 # Test binary, built with `go test -c`

@@ -84,6 +84,7 @@ func ReadProps() m.EmailData {
 	data.TemplateDir = p.GetString("templateDir", "")
 	data.TemplateName = p.GetString("templateName", "email-template.html")
 	data.ExcelFile = p.GetString("excelFile", "")
+	data.ImageName = p.GetString("imageName", "IVN-Nuenen-ca.jpg")
 	data.DryRun = p.GetBool("dryrun", false)
 	return data
 }

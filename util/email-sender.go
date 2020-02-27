@@ -16,7 +16,9 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 
 	m.SetAddressHeader("To", sendTo, sendToName)
 	m.SetHeader("Subject", data.Subject)
+	m.Embed(data.TemplateDir + "/" + data.ImageName)
 	m.SetBody("text/html", emailBody)
+
 	for i := 0; i < len(data.Attachments); i++ {
 		m.Attach(data.TemplateDir + model.AttachmentSubdir + "/" + data.Attachments[i].Name())
 	}
@@ -29,7 +31,7 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 			d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
 
 			if err := d.DialAndSend(m); err != nil {
-				panic(err)
+				fmt.Println(" Fout tijdens versturen van email naar " + sendTo + " " + err.Error())
 			}
 		}
 	}

@@ -16,6 +16,7 @@ func main() {
 	data.Attachments = u.FindAttachments(data.TemplateDir)
 	excelHeaders, sendtoCounts := u.ReadExcelFileHeaders(data.TemplateDir + "/" + data.ExcelFile)
 
+
 	goon := true
 	for goon {
 		data.MailListIdx, data.MailList = askMailingList(excelHeaders, sendtoCounts)
@@ -61,7 +62,6 @@ func skip(data m.EmailData, row []string) bool {
 }
 
 func showData(data m.EmailData) {
-
 
 	fmt.Println()
 	fmt.Println("Mail list = " + data.MailList)

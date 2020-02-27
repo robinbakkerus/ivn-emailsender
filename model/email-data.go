@@ -18,6 +18,7 @@ type EmailData struct {
 	Attachments  []os.FileInfo
 	MailListIdx  int
 	MailList     string
+	ImageName	 string
 	DryRun       bool
 }
 
