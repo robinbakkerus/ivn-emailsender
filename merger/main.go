@@ -13,10 +13,14 @@ import (
 )
 
 func main() {
-	fmt.Println("Merging IVN dumpfile with mailing list ...")
-
 	data := m.EmailData{}
 	data = u.ReadProps()
+	if data.DryRun {
+		fmt.Println("\nDRYRUN: Merging IVN dumpfile with mailing list ...")
+	} else {
+		fmt.Println("\nMerging IVN dumpfile with mailing list ...")
+	}
+
 	dumpfile := askDumpFile(utl.FindDumpFiles(data))
 	utl.UpdateNewAndModifiedRecords(data, dumpfile)
 }

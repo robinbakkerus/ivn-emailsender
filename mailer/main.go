@@ -38,17 +38,22 @@ func main() {
 }
 
 func processExcelfile(rows [][]string, data m.EmailData) {
-	sendMap := make(map[string]int)
+	sendMap := make(map[string]bool)
 	cnt := 0
 
 	for _, row := range rows {
-		mailAddr := row[0]
-		name := row[1]
-		if sendMap[mailAddr] == 0 {
-			sendMap[mailAddr] = 1
-			body := strings.Replace(data.TemplateBody, "{naam}", name, -1)
+		mailAddr := row[m.EMAIL]
+		aanhef := row[m.AANHEF]
+
+		if len(aanhef) == 0 {
+			aanhef = data.Aanhef
+		}
+
+		if !sendMap[mailAddr] {
+			sendMap[mailAddr] = true
+			body := strings.Replace(data.TemplateBody, "{aanhef}", aanhef, -1)
 			if !skip(data, row) {
-				u.SendEmail(data, mailAddr, name, body)
+				u.SendEmail(data, mailAddr, aanhef, body)
 			}
 			cnt++
 		}
@@ -65,6 +70,7 @@ func showData(data m.EmailData) {
 	fmt.Println()
 	fmt.Println("Mail list = " + data.MailList)
 	fmt.Println("Onderwerp  = " + data.Subject)
+	fmt.Println("Standaard aanhef  = " + data.Aanhef)
 	fmt.Println("Attachments ")
 	for i, f := range data.Attachments {
 		fmt.Println(i, f.Name())
@@ -75,13 +81,12 @@ func showData(data m.EmailData) {
 func askMailingList(headers []string, counts []int) (int, string) {
 	fmt.Println("Welke mailinglist :")
 	for index, hdr := range headers {
-		if index > 1 && len(hdr) > 0 {
-			nr := index - 2
-			fmt.Printf("%v: %v \t%v \n", nr, hdr, counts[index-2])
+		if index > m.AANHEF && len(hdr) > 0 {
+			fmt.Printf("%v: %v \t%v \n", index, hdr, counts[index-(m.AANHEF+1)])
 		}
 	}
 
 	var askNr int
 	fmt.Scan(&askNr)
-	return askNr + 2, headers[askNr+2]
+	return askNr, headers[askNr]
 }

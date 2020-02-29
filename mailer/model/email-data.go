@@ -5,6 +5,11 @@ import "os"
 const AttachmentSubdir = "/attachment"
 const HistorySubdir = "/verstuurd"
 
+// colums on mailing.xlsx
+const NAME = 1
+const EMAIL = 2
+const AANHEF = 3
+
 // EmailData ...
 type EmailData struct {
 	SmtpUser     string
@@ -18,7 +23,8 @@ type EmailData struct {
 	Attachments  []os.FileInfo
 	MailListIdx  int
 	MailList     string
-	ImageName	 string
+	ImageName    string
+	Aanhef       string
 	DryRun       bool
 }
 

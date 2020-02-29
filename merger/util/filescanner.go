@@ -27,7 +27,7 @@ func FindDumpFiles(data m.EmailData) []string {
 
 	for _, f := range files {
 
-		if strings.HasSuffix(f.Name(), ".xlsx") &&
+		if strings.HasSuffix(f.Name(), ".csv") &&
 			(!strings.HasSuffix(f.Name(), data.ExcelFile)) {
 			result = append(result, f.Name())
 		}

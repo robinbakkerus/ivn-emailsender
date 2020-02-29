@@ -34,8 +34,8 @@ func ReadExcelFile(filename string) [][]string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// Get all the rows in the Sheet1.
-	rows := xlsx.GetRows("Blad1")
+
+	rows := xlsx.GetRows(xlsx.GetSheetName(1))
 
 	rows[0] = rows[len(rows)-1] // Copy last element to index i.
 	rows[len(rows)-1] = nil     // Erase last element (write zero value).
@@ -51,11 +51,11 @@ func ReadExcelFileHeaders(filename string) ([]string, []int) {
 		fmt.Println(err)
 	}
 	// Get all the rows in the Sheet1.
-	rows := xlsx.GetRows("Blad1")
+	rows := xlsx.GetRows(xlsx.GetSheetName(1))
 
 	counts := make([]int, 0)
 
-	for i := 2; i < len(rows[0]); i++ {
+	for i := m.AANHEF + 1; i < len(rows[0]); i++ {
 		counts = append(counts, getSenttoCount(rows, i))
 	}
 
@@ -85,6 +85,7 @@ func ReadProps() m.EmailData {
 	data.TemplateName = p.GetString("templateName", "email-template.html")
 	data.ExcelFile = p.GetString("excelFile", "")
 	data.ImageName = p.GetString("imageName", "IVN-Nuenen-ca.jpg")
+	data.Aanhef = p.GetString("standaard-aanhef", "Beste mensen")
 	data.DryRun = p.GetBool("dryrun", false)
 	return data
 }
@@ -126,10 +127,6 @@ func MakeHistory(data m.EmailData) {
 	fromTemplate := data.TemplateDir + "/" + data.TemplateName
 	toTemplate := histDir(data) + "/" + data.TemplateName
 	Copy(fromTemplate, toTemplate)
-
-	//fromAtt := attDir(data) + "/" + data.Attachments
-	//toAtt := histDir(data) + "/" + data.Attachments
-	//Copy(fromAtt, toAtt)
 }
 
 func histDir(data m.EmailData) string {
