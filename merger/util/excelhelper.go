@@ -26,13 +26,7 @@ func openExcel(filename string) *excelize.File {
 // UpdateNewAndModifiedRecords ...
 func UpdateNewAndModifiedRecords(data m.EmailData, dumpFilename string) {
 
-	// dumpfile, err := excelize.OpenFile(data.TemplateDir + "/" + dumpFilename)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// dumpRecs := dumpfile.GetRows(dumpfile.GetSheetName(1))
-
-	dumpRecs := readCsv(data.TemplateDir + "/" + dumpFilename)
+	dumpRecs := readCsv(data.DownloadDir + "/" + dumpFilename)
 	mailFilename := data.TemplateDir + "/" + data.ExcelFile
 	mailfile, err := excelize.OpenFile(mailFilename)
 	if err != nil {
@@ -95,7 +89,7 @@ func processDeleted(dumpRecs [][]string, mailRecs [][]string, mailfile *excelize
 		mail := row[2]
 
 		dumpRow, _ := corrRow(id, dumpRecs)
-		if dumpRow == nil && len(id) > 0 {
+		if dumpRow == nil && len(id) > 0 && rowNr > 0 {
 			fmt.Printf("Verwijderd record: %v id = %v : %v %v \n", rowNr, id, name, mail)
 			if !dryrun {
 				mailfile.SetCellValue(mailfile.GetSheetName(1), getCellname("E", rowNr+1), "D")

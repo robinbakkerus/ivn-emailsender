@@ -2,17 +2,16 @@ package main
 
 import (
 	"fmt"
-
 	m "jrb/ivn-emailsender/mailer/model"
 	u "jrb/ivn-emailsender/mailer/util"
+	"strconv"
 	"strings"
 )
 
 func main() {
-	fmt.Println("Sending emails ...")
-
 	data := m.EmailData{}
 	data = u.ReadProps()
+	fmt.Println("Sending emails ..., dryrun = " + strconv.FormatBool((data.DryRun)))
 	data.Attachments = u.FindAttachments(data.TemplateDir)
 	excelHeaders, sendtoCounts := u.ReadExcelFileHeaders(data.TemplateDir + "/" + data.ExcelFile)
 
@@ -22,9 +21,14 @@ func main() {
 		data.Subject = u.AskString(data.Subject)
 		showData(data)
 
-		if u.CheckIfAlreadyProcessed(data) {
-			fmt.Println("Deze excel file is vandaag al verwerkt!!")
+		// if u.CheckIfAlreadyProcessed(data) {
+		// 	fmt.Println("Deze excel file is vandaag al verwerkt!!")
+		// }
+
+		if len(data.Attachments) == 0 {
+			fmt.Println("LET OP, Ik heb geen attachments gevonden in " + data.TemplateDir + m.AttachmentSubdir)
 		}
+
 		if u.AskBool("Okay om door te gaan? ", true) {
 			u.MakeHistory(data)
 			data.TemplateBody = u.ReadEmailTemplate(data)
@@ -51,11 +55,11 @@ func processExcelfile(rows [][]string, data m.EmailData) {
 
 		if !sendMap[mailAddr] {
 			sendMap[mailAddr] = true
-			body := strings.Replace(data.TemplateBody, "{aanhef}", aanhef, -1)
+			body := strings.Replace(data.TemplateBody, m.ReplaceAanhef, aanhef, -1)
 			if !skip(data, row) {
 				u.SendEmail(data, mailAddr, aanhef, body)
+				cnt++
 			}
-			cnt++
 		}
 	}
 	fmt.Println("In totaal " + u.ToStr(cnt) + " verstuurd")

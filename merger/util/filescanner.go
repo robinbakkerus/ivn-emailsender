@@ -16,9 +16,9 @@ import (
 // FindDumpFiles ...
 func FindDumpFiles(data m.EmailData) []string {
 
-	fmt.Println(" op zoek naar dumpfiles in " + data.TemplateDir)
+	fmt.Println("Op zoek naar dumpfiles in " + data.DownloadDir)
 
-	files, err := ioutil.ReadDir(data.TemplateDir)
+	files, err := ioutil.ReadDir(data.DownloadDir)
 	if err != nil {
 		log.Fatal(err)
 	}

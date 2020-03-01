@@ -4,6 +4,7 @@ import "os"
 
 const AttachmentSubdir = "/attachment"
 const HistorySubdir = "/verstuurd"
+const ReplaceAanhef = "{aanhef}"
 
 // colums on mailing.xlsx
 const NAME = 1
@@ -16,6 +17,7 @@ type EmailData struct {
 	SmtpPwd      string
 	SendFrom     string
 	TemplateDir  string
+	DownloadDir  string
 	TemplateName string
 	ExcelFile    string
 	TemplateBody string

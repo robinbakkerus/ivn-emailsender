@@ -82,6 +82,7 @@ func ReadProps() m.EmailData {
 	data.SmtpPwd = p.GetString("smtpPwd", "")
 	data.SendFrom = p.GetString("sendFrom", "")
 	data.TemplateDir = p.GetString("templateDir", "")
+	data.DownloadDir = p.GetString("downloadDir", "")
 	data.TemplateName = p.GetString("templateName", "email-template.html")
 	data.ExcelFile = p.GetString("excelFile", "")
 	data.ImageName = p.GetString("imageName", "IVN-Nuenen-ca.jpg")
