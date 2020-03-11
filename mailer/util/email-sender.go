@@ -25,7 +25,7 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 
 	if len(sendTo) > 0 {
 		if data.DryRun {
-			fmt.Println("DRY-RUN: sending email to " + sendTo + " " + sendToName)
+			fmt.Println(sendTo)
 		} else {
 			fmt.Println("sending email to " + sendTo + " " + sendToName)
 			d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
