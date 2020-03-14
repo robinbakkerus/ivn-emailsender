@@ -11,7 +11,8 @@ import (
 func main() {
 	data := m.EmailData{}
 	data = u.ReadProps()
-	fmt.Println("Sending emails ..., dryrun = " + strconv.FormatBool((data.DryRun)))
+	data.DryRun = u.AskBool("DryRun ", false)
+	fmt.Println("Sending emails ..., DRYRUN = " + strconv.FormatBool((data.DryRun)))
 	data.Attachments = u.FindAttachments(data.TemplateDir)
 	excelHeaders, sendtoCounts := u.ReadExcelFileHeaders(data.TemplateDir + "/" + data.ExcelFile)
 
@@ -20,10 +21,6 @@ func main() {
 		data.MailListIdx, data.MailList = askMailingList(excelHeaders, sendtoCounts)
 		data.Subject = u.AskString(data.Subject)
 		showData(data)
-
-		// if u.CheckIfAlreadyProcessed(data) {
-		// 	fmt.Println("Deze excel file is vandaag al verwerkt!!")
-		// }
 
 		if len(data.Attachments) == 0 {
 			fmt.Println("LET OP, Ik heb geen attachments gevonden in " + data.TemplateDir + m.AttachmentSubdir)

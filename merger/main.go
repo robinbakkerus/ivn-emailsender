@@ -15,11 +15,8 @@ import (
 func main() {
 	data := m.EmailData{}
 	data = u.ReadProps()
-	if data.DryRun {
-		fmt.Println("\nDRYRUN: Merging IVN dumpfile with mailing list ...")
-	} else {
-		fmt.Println("\nMerging IVN dumpfile with mailing list ...")
-	}
+	data.DryRun = u.AskBool("DryRun ", false)
+	fmt.Println("Merging IVN dumpfile with mailing list ... DRYRUN = " + u.BoolToStr(data.DryRun))
 
 	dumpfile := askDumpFile(utl.FindDumpFiles(data), data.DownloadDir)
 	utl.UpdateNewAndModifiedRecords(data, dumpfile)

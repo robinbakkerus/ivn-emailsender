@@ -87,7 +87,6 @@ func ReadProps() m.EmailData {
 	data.ExcelFile = p.GetString("excelFile", "")
 	data.ImageName = p.GetString("imageName", "IVN-Nuenen-ca.jpg")
 	data.Aanhef = p.GetString("standaard-aanhef", "Beste mensen")
-	data.DryRun = p.GetBool("dryrun", false)
 	return data
 }
 
