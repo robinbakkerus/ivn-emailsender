@@ -45,7 +45,7 @@ func processExcelfile(rows [][]string, data m.EmailData) {
 	sendMap := make(map[string]bool)
 	cnt := 0
 
-	fmt.Println("DRY-RUN: sending emails to ...")
+	fmt.Println("Sending emails to ...")
 
 	for _, row := range rows {
 		mailAddr := row[m.EMAIL]
