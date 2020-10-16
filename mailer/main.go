@@ -6,6 +6,8 @@ import (
 	u "jrb/ivn-emailsender/mailer/util"
 	"strconv"
 	"strings"
+
+	"gopkg.in/gomail.v2"
 )
 
 func main() {
@@ -42,7 +44,14 @@ func processExcelfile(rows [][]string, data m.EmailData) {
 	sendMap := make(map[string]bool)
 	cnt := 0
 
-	fmt.Println("Sending emails to ...")
+	fmt.Println("Sending emails naar ...")
+
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
+	var sender gomail.SendCloser
+	var err error
+	if sender, err = dialer.Dial(); err != nil {
+		panic(err)
+	}
 
 	for _, row := range rows {
 		mailAddr := row[m.EMAIL]
@@ -56,15 +65,21 @@ func processExcelfile(rows [][]string, data m.EmailData) {
 			sendMap[mailAddr] = true
 			body := strings.Replace(data.TemplateBody, m.ReplaceAanhef, aanhef, -1)
 			if !skip(data, row) {
-				u.SendEmail(data, mailAddr, aanhef, body)
+				u.SendEmail(dialer, sender, data, mailAddr, aanhef, body)
 				cnt++
 			}
 		}
 	}
+
+	if err := sender.Close(); err != nil {
+		panic(err)
+	}
+
 	fmt.Println("In totaal " + u.ToStr(cnt) + " verstuurd")
 }
 
 func skip(data m.EmailData, row []string) bool {
+	// fmt.Println(strings.ToUpper(row[data.MailListIdx]))
 	return strings.ToUpper(row[data.MailListIdx]) != "X"
 }
 

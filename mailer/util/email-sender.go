@@ -9,7 +9,7 @@ import (
 )
 
 // SendEmail send email
-func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody string) {
+func SendEmail(dialer *gomail.Dialer, sender gomail.SendCloser, data model.EmailData, sendTo string, sendToName string, emailBody string) {
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", data.SmtpUser)
@@ -28,9 +28,9 @@ func SendEmail(data model.EmailData, sendTo string, sendToName string, emailBody
 			fmt.Println(sendTo)
 		} else {
 			fmt.Println("sending email to " + sendTo + " " + sendToName)
-			d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
+			//d := gomail.NewDialer("smtp.gmail.com", 587, data.SmtpUser, data.SmtpPwd)
 
-			if err := d.DialAndSend(m); err != nil {
+			if err := gomail.Send(sender, m); err != nil {
 				fmt.Println(" Fout tijdens versturen van email naar " + sendTo + " " + err.Error())
 			}
 		}
