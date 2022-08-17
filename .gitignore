@@ -20,3 +20,4 @@ merger/merger
 # vendor/
 
 config.properties
+*.prefs
